@@ -4,12 +4,14 @@ import com.cyecize.gatewayserver.api.connection.Exchange;
 import com.cyecize.gatewayserver.api.server.Connection;
 import com.cyecize.gatewayserver.constants.General;
 import com.cyecize.gatewayserver.error.CannotParseRequestException;
+import com.cyecize.gatewayserver.error.EmptyRequestException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class HttpProtocolUtils {
     public static List<String> parseMetadataLines(InputStream inputStream, boolean allowNewLineWithoutReturn)
-            throws CannotParseRequestException {
+            throws CannotParseRequestException, EmptyRequestException {
         try {
             final List<String> metadataLines = new ArrayList<>();
 
@@ -76,6 +78,10 @@ public class HttpProtocolUtils {
 
             return metadataLines;
         } catch (IOException ex) {
+            if (ex instanceof SocketTimeoutException) {
+                throw new EmptyRequestException();
+            }
+
             throw new CannotParseRequestException(ex.getMessage(), ex);
         }
     }

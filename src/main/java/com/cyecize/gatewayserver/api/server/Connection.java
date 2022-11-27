@@ -1,6 +1,7 @@
 package com.cyecize.gatewayserver.api.server;
 
 import com.cyecize.gatewayserver.error.CannotParseRequestException;
+import com.cyecize.gatewayserver.error.EmptyRequestException;
 import com.cyecize.gatewayserver.util.HttpProtocolUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -85,6 +86,12 @@ public class Connection {
             this.isRequestLinesRead = true;
         } catch (CannotParseRequestException ex) {
             log.warn("Error while reading HTTP request lines (ip: {}). {}", this.getHostOrIp(), ex.getMessage());
+            this.close();
+            return false;
+        } catch (EmptyRequestException ex) {
+            // Ignore this exception!
+            // Web browsers often send empty socket connection when caching is enabled, mainly for favicon.ico
+            // We do not want to keep this connection alive and flood our thread pool.
             this.close();
             return false;
         }
