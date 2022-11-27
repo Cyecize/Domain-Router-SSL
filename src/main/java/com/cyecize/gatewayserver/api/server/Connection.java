@@ -4,15 +4,10 @@ import com.cyecize.gatewayserver.error.CannotParseRequestException;
 import com.cyecize.gatewayserver.error.EmptyRequestException;
 import com.cyecize.gatewayserver.util.HttpProtocolUtils;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ssl.ExtendedSSLSession;
-import javax.net.ssl.SNIHostName;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.StandardConstants;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -60,16 +55,11 @@ public class Connection {
         this.isClosed = true;
     }
 
-    public Object getHostOrIp() {
-        if (this.isSsl) {
-            return ((ExtendedSSLSession) ((SSLSocket) this.socket).getHandshakeSession()).getRequestedServerNames()
-                    .stream()
-                    .filter(sniServerName -> sniServerName.getType() == StandardConstants.SNI_HOST_NAME)
-                    .map(sniServerName -> ((SNIHostName) sniServerName).getAsciiName())
-                    .findFirst().orElse("N/A");
+    public String getHostOrIp() {
+        if (this.isRequestLinesRead) {
+            return String.format("%s / %s", this.getHost(), this.socket.getInetAddress().getHostName());
         }
-
-        return socket.getInetAddress();
+        return this.socket.getInetAddress().getHostName();
     }
 
     public void addCloseable(Closeable closeable) {
