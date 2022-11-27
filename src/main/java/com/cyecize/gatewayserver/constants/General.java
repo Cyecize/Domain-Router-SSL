@@ -20,6 +20,10 @@ public class General {
 
     public static final int DEFAULT_HTTPS_PORT = 443;
 
+    public static final int DEFAULT_CONNECTION_TIMEOUT_SECONDS = 600;
+
+    public static final int READ_BUFFER_SIZE = 8196;
+
     public static final int DEFAULT_THREAD_POOL_SIZE = 20;
 
     public static final int MIN_THREAD_POOL_SIZE = 3;

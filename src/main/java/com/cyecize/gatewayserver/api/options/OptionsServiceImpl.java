@@ -81,6 +81,11 @@ public class OptionsServiceImpl implements OptionsService {
             log.info("Debugging options present!");
         }
 
+        if (options.getKillConnectionAfterSeconds() == null || options.getKillConnectionAfterSeconds() < 1) {
+            log.info("Setting connection timeout to {} seconds.", General.DEFAULT_CONNECTION_TIMEOUT_SECONDS);
+            options.setKillConnectionAfterSeconds(General.DEFAULT_CONNECTION_TIMEOUT_SECONDS);
+        }
+
         return options;
     }
 }

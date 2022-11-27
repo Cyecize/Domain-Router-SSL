@@ -1,9 +1,11 @@
 {
   "httpPort": 80,
   "httpsPort": 443,
+  "startHttps": true,
   "workingDir": null,
   "keystoreFileName": null,
   "threadPoolSize": 20,
+  "killConnectionAfterSeconds": 600,
   "routeOptions": [
     {
       "host": "website1.test",
