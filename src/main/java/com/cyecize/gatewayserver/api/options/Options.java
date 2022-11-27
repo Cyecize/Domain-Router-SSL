@@ -12,8 +12,10 @@ public class Options {
 
     private String workingDir;
     private String keystoreFileName;
+    private Integer threadPoolSize;
 
     private List<RouteOption> routeOptions;
+    private DebuggingOptions debuggingOptions;
 
     static Options empty() {
         final Options options = new Options();

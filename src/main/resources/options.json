@@ -3,6 +3,7 @@
   "httpsPort": 443,
   "workingDir": null,
   "keystoreFileName": null,
+  "threadPoolSize": 20,
   "routeOptions": [
     {
       "host": "website1.test",
@@ -20,5 +21,9 @@
       "destinationPort": 8000,
       "certificateAlias": "web2Cert"
     }
-  ]
+  ],
+  "debuggingOptions": {
+    "runningTasksIntervalSeconds": -1,
+    "taskStuckIntervalSeconds": -1
+  }
 }

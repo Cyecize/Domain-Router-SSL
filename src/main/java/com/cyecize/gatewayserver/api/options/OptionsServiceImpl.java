@@ -72,6 +72,15 @@ public class OptionsServiceImpl implements OptionsService {
             options.setRouteOptions(new ArrayList<>());
         }
 
+        if (options.getThreadPoolSize() == null) {
+            log.info("Using default thread pool size {}.", General.DEFAULT_THREAD_POOL_SIZE);
+            options.setThreadPoolSize(General.DEFAULT_THREAD_POOL_SIZE);
+        }
+
+        if (options.getDebuggingOptions() != null) {
+            log.info("Debugging options present!");
+        }
+
         return options;
     }
 }
