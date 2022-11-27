@@ -48,7 +48,6 @@ public class SSLContextBeanConfig {
      * yyy.com -> yyy
      * 134.134.122.19 -> defaultCertificate
      */
-    //TODO: Test subdomains
     private final Map<String, String> hostAliasMap = new HashMap<>();
 
     @PostConstruct
