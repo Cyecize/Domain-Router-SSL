@@ -28,6 +28,8 @@ public class PoolServiceImpl implements PoolService {
 
     private final AtomicInteger runningTasks = new AtomicInteger();
 
+    private final ThreadLocal<Task> currentTask = new ThreadLocal<>();
+
     public PoolServiceImpl(Options options) {
         this.options = options;
         this.pool = this.getPool();
@@ -37,6 +39,8 @@ public class PoolServiceImpl implements PoolService {
     @Override
     public Future<?> submit(Task task) {
         return this.pool.submit(() -> {
+            this.currentTask.set(task);
+            Thread.currentThread().setName(task.getTaskName());
             this.runningTasks.incrementAndGet();
             final Optional<ScheduledExecutorService> stuckTaskScheduler = this.createForStuckTask(task);
 
@@ -47,6 +51,12 @@ public class PoolServiceImpl implements PoolService {
                 this.runningTasks.decrementAndGet();
             }
         });
+    }
+
+    @Override
+    public void updateCurrentTaskName(String name) {
+        this.currentTask.get().setTaskName(name);
+        Thread.currentThread().setName(name);
     }
 
     private ThreadPoolExecutor getPool() {
