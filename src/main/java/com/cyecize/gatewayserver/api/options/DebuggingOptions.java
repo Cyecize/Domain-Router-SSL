@@ -6,4 +6,5 @@ import lombok.Data;
 public class DebuggingOptions {
     private int runningTasksIntervalSeconds;
     private int taskStuckIntervalSeconds;
+    private boolean logSSL;
 }

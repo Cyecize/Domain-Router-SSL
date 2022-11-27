@@ -16,9 +16,13 @@ public class General {
 
     public static final String ENV_VAR_OPTIONS_FILE_NAME = "optionsFile";
 
+    public static final String DEFAULT_KEYSTORE_FILE_NAME = "self-signed.keystore";
+
     public static final int DEFAULT_HTTP_PORT = 80;
 
     public static final int DEFAULT_HTTPS_PORT = 443;
+
+    public static final int DEFAULT_CLIENT_SO_TIMEOUT_MILLIS = 2000;
 
     public static final int DEFAULT_CONNECTION_TIMEOUT_SECONDS = 600;
 

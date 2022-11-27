@@ -2,10 +2,13 @@
   "httpPort": 80,
   "httpsPort": 443,
   "startHttps": true,
-  "workingDir": null,
-  "keystoreFileName": null,
+  "defaultCertificateAlias": "selfSignedDefault",
+  "keystoreFileName": "self-signed.keystore",
+  "keystoreFileDir": null,
+  "keystorePassword": "123qweasd",
   "threadPoolSize": 20,
   "killConnectionAfterSeconds": 600,
+  "clientSoTimeoutMillis": 2000,
   "routeOptions": [
     {
       "host": "website1.test",
@@ -14,18 +17,19 @@
       ],
       "destinationHost": "192.168.1.200",
       "destinationPort": 7070,
-      "certificateAlias": "web1Cert"
+      "certificateAlias": null
     },
     {
       "host": "website2.test",
       "subdomains": [],
       "destinationHost": "localhost",
       "destinationPort": 8000,
-      "certificateAlias": "web2Cert"
+      "certificateAlias": null
     }
   ],
   "debuggingOptions": {
     "runningTasksIntervalSeconds": -1,
     "taskStuckIntervalSeconds": -1
+    "logSSL": false
   }
 }

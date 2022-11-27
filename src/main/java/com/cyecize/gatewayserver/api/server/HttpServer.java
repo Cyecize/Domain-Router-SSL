@@ -33,6 +33,7 @@ public class HttpServer implements Server {
 
                 while (true) {
                     final Socket client = server.accept();
+                    client.setSoTimeout(this.options.getClientSoTimeoutMillis());
                     final Connection connection = new Connection(client, false);
 
                     this.poolService.submit(new Task(

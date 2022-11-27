@@ -86,6 +86,21 @@ public class OptionsServiceImpl implements OptionsService {
             options.setKillConnectionAfterSeconds(General.DEFAULT_CONNECTION_TIMEOUT_SECONDS);
         }
 
+        if (options.getKeystoreFileName() == null) {
+            log.info("Using default keystore, {}.", General.DEFAULT_KEYSTORE_FILE_NAME);
+            options.setKeystoreFileName(General.DEFAULT_KEYSTORE_FILE_NAME);
+        }
+
+        if (options.getKeystoreFileDir() == null) {
+            log.info("Using keystore dir, {}.", General.WORKING_DIRECTORY);
+            options.setKeystoreFileDir(General.WORKING_DIRECTORY);
+        }
+
+        if (options.getClientSoTimeoutMillis() == null) {
+            log.info("Using default client SO timeout, {} millis.", General.DEFAULT_CLIENT_SO_TIMEOUT_MILLIS);
+            options.setClientSoTimeoutMillis(General.DEFAULT_CLIENT_SO_TIMEOUT_MILLIS);
+        }
+
         return options;
     }
 }

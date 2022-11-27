@@ -11,10 +11,13 @@ public class Options {
     private Integer httpsPort;
     private boolean startHttps;
 
-    private String workingDir;
     private String keystoreFileName;
+    private String keystoreFileDir;
+    private String keystorePassword;
+    private String defaultCertificateAlias;
     private Integer threadPoolSize;
     private Integer killConnectionAfterSeconds;
+    private Integer clientSoTimeoutMillis;
 
     private List<RouteOption> routeOptions;
     private DebuggingOptions debuggingOptions;
