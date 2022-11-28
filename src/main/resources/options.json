@@ -29,7 +29,7 @@
   ],
   "debuggingOptions": {
     "runningTasksIntervalSeconds": -1,
-    "taskStuckIntervalSeconds": -1
+    "taskStuckIntervalSeconds": -1,
     "logSSL": false
   }
 }
