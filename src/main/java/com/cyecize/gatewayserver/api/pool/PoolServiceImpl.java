@@ -9,9 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,7 +20,7 @@ public class PoolServiceImpl implements PoolService {
 
     private final Options options;
 
-    private final ThreadPoolExecutor pool;
+    private final ExecutorService pool;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -59,19 +57,24 @@ public class PoolServiceImpl implements PoolService {
         Thread.currentThread().setName(name);
     }
 
-    private ThreadPoolExecutor getPool() {
-        final int poolSize = Math.max(
-                this.options.getThreadPoolSize(),
+    private ExecutorService getPool() {
+        final int minPoolSize = Math.max(
+                this.options.getMinThreadPoolSize(),
                 General.MIN_THREAD_POOL_SIZE
         );
 
-        log.info("Initializing thread pool of size: {} - {}.", General.MIN_THREAD_POOL_SIZE, poolSize);
-        return new ThreadPoolExecutor(
-                General.MIN_THREAD_POOL_SIZE,
+        final int poolSize = Math.max(
+                this.options.getThreadPoolSize(),
+                minPoolSize
+        );
+
+        log.info("Initializing thread pool of size: {} - {}.", minPoolSize, poolSize);
+
+        return new ScalingThreadPool(
+                minPoolSize,
                 poolSize,
                 1L,
-                TimeUnit.MINUTES,
-                new LinkedBlockingQueue<>()
+                TimeUnit.MINUTES
         );
     }
 

@@ -77,6 +77,11 @@ public class OptionsServiceImpl implements OptionsService {
             options.setThreadPoolSize(General.DEFAULT_THREAD_POOL_SIZE);
         }
 
+        if (options.getMinThreadPoolSize() == null) {
+            log.info("Using default min thread pool size {}.", General.MIN_THREAD_POOL_SIZE);
+            options.setMinThreadPoolSize(General.MIN_THREAD_POOL_SIZE);
+        }
+
         if (options.getDebuggingOptions() != null) {
             log.info("Debugging options present!");
         }

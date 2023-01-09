@@ -7,6 +7,7 @@
   "keystoreFileDir": null,
   "keystorePassword": "123qweasd",
   "threadPoolSize": 20,
+  "minThreadPoolSize": 5,
   "killConnectionAfterSeconds": 600,
   "clientSoTimeoutMillis": 2000,
   "routeOptions": [

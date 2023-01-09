@@ -16,6 +16,7 @@ public class Options {
     private String keystorePassword;
     private String defaultCertificateAlias;
     private Integer threadPoolSize;
+    private Integer minThreadPoolSize;
     private Integer killConnectionAfterSeconds;
     private Integer clientSoTimeoutMillis;
 
