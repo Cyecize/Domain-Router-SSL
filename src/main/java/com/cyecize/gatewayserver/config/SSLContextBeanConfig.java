@@ -58,23 +58,24 @@ public class SSLContextBeanConfig {
 
         final String defaultAlias = this.options.getDefaultCertificateAlias();
 
-        for (RouteOption routeOption : this.options.getRouteOptions()) {
-            for (RouteOption option : this.options.getRouteOptions()) {
-                if (option.getCertificateAlias() == null && defaultAlias == null) {
-                    throw new IllegalArgumentException(String.format(
-                            "Route option [%s] is missing https certificate alias. "
-                                    + "Add alias, add default alias or disable https server",
-                            option.getHost()
-                    ));
-                }
+        for (RouteOption option : this.options.getRouteOptions()) {
+            if (!option.getScheme().isSSLCompatible()) {
+                continue;
+            }
+            if (option.getCertificateAlias() == null && defaultAlias == null) {
+                throw new IllegalArgumentException(String.format(
+                        "Route option [%s] is missing https certificate alias. "
+                                + "Add alias, add default alias or disable https server",
+                        option.getHost()
+                ));
+            }
 
-                final String certAlias = Objects.requireNonNullElse(option.getCertificateAlias(), defaultAlias);
-                log.info("Binding host {} to certificate with alias {}.", option.getHost(), certAlias);
+            final String certAlias = Objects.requireNonNullElse(option.getCertificateAlias(), defaultAlias);
+            log.info("Binding host {} to certificate with alias {}.", option.getHost(), certAlias);
 
-                this.hostAliasMap.put(option.getHost(), certAlias);
-                for (String subdomain : option.getSubdomains()) {
-                    this.hostAliasMap.put(subdomain + "." + option.getHost(), certAlias);
-                }
+            this.hostAliasMap.put(option.getHost(), certAlias);
+            for (String subdomain : option.getSubdomains()) {
+                this.hostAliasMap.put(subdomain + "." + option.getHost(), certAlias);
             }
         }
     }

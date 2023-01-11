@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.cyecize.gatewayserver.util.HttpProtocolUtils.transferHttpRequest;
@@ -29,31 +31,37 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private final PoolService poolService;
 
     /**
-     * Mapping of host to the desired destination server.
+     * Mapping of host to the desired destination server / servers.
+     * If more than one server are present in a collection, choose the most appropriate one or the first one.
      * <p>
      * Eg.
      * abc.com -> localhost:8080
      * www.abc.com -> localhost:8080
      * <p>
-     * xyz.com -> localhost:5050
+     * xyz.com -> http localhost:5050, https localhost:5051
      * abc.xyz.com -> localhost:5060
      * <p>
      * yyy.com -> 192.168.0.1:80
      * 134.134.122.19 -> localhost:8090
      */
-    private final Map<String, DestinationDto> domainsMap = new HashMap<>();
+    private final Map<String, List<DestinationDto>> domainsMap = new HashMap<>();
 
     @PostConstruct
     void init() {
         for (RouteOption option : this.options.getRouteOptions()) {
             final DestinationDto dest = new DestinationDto(
                     option.getDestinationPort(),
-                    option.getDestinationHost()
+                    option.getDestinationHost(),
+                    option.getScheme()
             );
 
-            this.domainsMap.put(option.getHost(), dest);
+            this.domainsMap.putIfAbsent(option.getHost(), new ArrayList<>());
+            this.domainsMap.get(option.getHost()).add(dest);
+
             for (String subdomain : option.getSubdomains()) {
-                this.domainsMap.put(subdomain + "." + option.getHost(), dest);
+                final String domainKey = subdomain + "." + option.getHost();
+                this.domainsMap.putIfAbsent(domainKey, new ArrayList<>());
+                this.domainsMap.get(domainKey).add(dest);
             }
         }
     }
@@ -69,13 +77,17 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
             final String host = clientConn.getHost();
 
-            if (!this.domainsMap.containsKey(host)) {
+            final List<DestinationDto> servers = this.domainsMap.getOrDefault(host, new ArrayList<>());
+            final DestinationDto server = servers.stream()
+                    .filter(s -> s.getScheme().isCompatibleWith(clientConn))
+                    .findFirst().orElse(null);
+
+            if (server == null) {
                 log.warn("No such host " + host);
                 clientConn.close();
                 return;
             }
 
-            final DestinationDto server = this.domainsMap.get(host);
             final Exchange exchange;
             try {
                 final Socket serverSock = new Socket(server.getHost(), server.getPort());

@@ -1,5 +1,6 @@
 package com.cyecize.gatewayserver.api.options;
 
+import com.cyecize.gatewayserver.api.server.Scheme;
 import com.cyecize.gatewayserver.constants.General;
 import com.cyecize.ioc.annotations.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -104,6 +105,12 @@ public class OptionsServiceImpl implements OptionsService {
         if (options.getClientSoTimeoutMillis() == null) {
             log.info("Using default client SO timeout, {} millis.", General.DEFAULT_CLIENT_SO_TIMEOUT_MILLIS);
             options.setClientSoTimeoutMillis(General.DEFAULT_CLIENT_SO_TIMEOUT_MILLIS);
+        }
+
+        for (RouteOption routeOption : options.getRouteOptions()) {
+            if (routeOption.getScheme() == null) {
+                routeOption.setScheme(Scheme.ALL);
+            }
         }
 
         return options;

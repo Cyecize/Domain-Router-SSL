@@ -39,6 +39,10 @@ public class Connection {
         this.isSsl = isSsl;
     }
 
+    public boolean isSsl() {
+        return this.isSsl;
+    }
+
     public void close() {
         if (this.isClosed) {
             return;

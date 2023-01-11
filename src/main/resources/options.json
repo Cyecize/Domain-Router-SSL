@@ -18,14 +18,16 @@
       ],
       "destinationHost": "192.168.1.200",
       "destinationPort": 7070,
-      "certificateAlias": null
+      "certificateAlias": null,
+      "scheme": "ALL"
     },
     {
       "host": "website2.test",
       "subdomains": [],
       "destinationHost": "localhost",
       "destinationPort": 8000,
-      "certificateAlias": null
+      "certificateAlias": null,
+      "scheme": "HTTP"
     }
   ],
   "debuggingOptions": {
