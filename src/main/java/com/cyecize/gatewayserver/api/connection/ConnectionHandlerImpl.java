@@ -30,6 +30,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     private final PoolService poolService;
 
+    private final KeepAliveSessionHandler keepAliveSessionHandler;
+
     /**
      * Mapping of host to the desired destination server / servers.
      * If more than one server are present in a collection, choose the most appropriate one or the first one.
@@ -108,15 +110,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             this.asyncSocketConnection(
                     String.format("Request Transfer Task, %s", exchangeName),
                     () -> transferHttpRequest(exchange),
-                    exchange,
-                    false
+                    exchange
             );
 
             this.asyncSocketConnection(
                     String.format("Response Transfer Task, %s", exchangeName),
-                    () -> transferHttpResponse(exchange),
-                    exchange,
-                    true
+                    () -> this.transferServerResponse(exchange),
+                    exchange
             );
 
         } catch (IOException ex) {
@@ -125,20 +125,27 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         }
     }
 
+    private void transferServerResponse(Exchange exchange) throws IOException {
+        transferHttpResponse(exchange);
+
+        final String connection = exchange.getServerConnection().getConnection();
+        if (connection == null || !connection.contains("keep-alive")) {
+            exchange.close();
+            return;
+        }
+
+        this.keepAliveSessionHandler.runKeepAliveConnection(exchange);
+    }
+
     private void asyncSocketConnection(String taskName,
                                        RunnableThrowable runnable,
-                                       Exchange exchange,
-                                       boolean closeOnFinish) {
+                                       Exchange exchange) {
         this.poolService.submit(new Task(
                 taskName,
                 () -> {
                     try {
                         runnable.run();
                     } catch (IOException ignored) {
-                        exchange.close();
-                        return;
-                    }
-                    if (closeOnFinish) {
                         exchange.close();
                     }
                 }

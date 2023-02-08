@@ -32,6 +32,9 @@ public class Connection {
 
     private Map<String, String> headers;
 
+    /**
+     * Resources that are bound to this connection and depend on it being active to function properly.
+     */
     private final List<Closeable> closeables = new ArrayList<>();
 
     public Connection(Socket socket, boolean isSsl) {
@@ -70,6 +73,11 @@ public class Connection {
         this.closeables.add(closeable);
     }
 
+    public void closeCloseables() {
+        this.closeables.forEach(Closeable::close);
+        this.closeables.clear();
+    }
+
     public boolean readRequestLines() throws IOException {
         if (this.isRequestLinesRead) {
             return true;
@@ -101,6 +109,11 @@ public class Connection {
     public String getHost() {
         this.setHeaders();
         return HttpProtocolUtils.getHost(this.socket, this.headers);
+    }
+
+    public String getConnection() {
+        this.setHeaders();
+        return this.headers.get("Connection");
     }
 
     @SneakyThrows
