@@ -70,7 +70,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public void process(Connection clientConn) {
+        final boolean logConnections = this.options.getDebuggingOptions() != null
+                && this.options.getDebuggingOptions().isLogConnections();
         try {
+            if (logConnections) {
+                log.info("New connection: {}", clientConn.getSocket().getInetAddress());
+            }
             ScheduleUtils.scheduleConnectionTerminator(clientConn, this.options.getKillConnectionAfterSeconds());
 
             if (!clientConn.readRequestLines()) {
@@ -78,6 +83,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             }
 
             final String host = clientConn.getHost();
+            if (logConnections) {
+                log.info("Connection: {} has host {}", clientConn.getSocket().getInetAddress(), host);
+            }
 
             final List<DestinationDto> servers = this.domainsMap.getOrDefault(host, new ArrayList<>());
             final DestinationDto server = servers.stream()
