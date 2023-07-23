@@ -7,5 +7,4 @@ public class DebuggingOptions {
     private int runningTasksIntervalSeconds;
     private int taskStuckIntervalSeconds;
     private boolean logSSL;
-    private boolean logConnections;
 }
